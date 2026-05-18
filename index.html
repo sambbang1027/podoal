@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🍇 포도알 파이터</title>
+    <script>
+      // 404.html에서 리다이렉트된 경로 복원
+      (function () {
+        var p = new URLSearchParams(window.location.search).get('p')
+        if (p) {
+          var hash = new URLSearchParams(window.location.search).get('hash')
+          window.history.replaceState(
+            null, null,
+            '/' + p + (hash ? '#' + hash : '')
+          )
+        }
+      })()
+    </script>
+    <script type="module" crossorigin src="/podoal/assets/index-C-dwhc9h.js"></script>
+    <link rel="stylesheet" crossorigin href="/podoal/assets/index-Dak7bOOl.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
