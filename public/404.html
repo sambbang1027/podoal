@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      // GitHub Pages SPA 리다이렉트
+      // 존재하지 않는 경로로 접근 시 index.html로 쿼리스트링에 경로를 담아 리다이렉트
+      var l = window.location
+      l.replace(
+        l.protocol + '//' + l.host + l.pathname.split('/').slice(0, 2).join('/') +
+        '/?p=' + encodeURIComponent(l.pathname.slice(1) + l.search) +
+        (l.hash ? '&hash=' + encodeURIComponent(l.hash.slice(1)) : '')
+      )
+    </script>
+  </head>
+  <body></body>
+</html>
