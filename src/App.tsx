@@ -1,0 +1,26 @@
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import Layout from './components/Layout'
+import Setting from './pages/Setting'
+import Ready from './pages/Ready'
+import Queue from './pages/Queue'
+import Seat from './pages/Seat'
+import Captcha from './pages/Captcha'
+import Result from './pages/Result'
+
+const router = createBrowserRouter([
+  {
+    element: <Layout />,
+    children: [
+      { path: '/', element: <Setting /> },
+      { path: '/ready', element: <Ready /> },
+      { path: '/queue', element: <Queue /> },
+      { path: '/captcha', element: <Captcha /> },
+      { path: '/seat', element: <Seat /> },
+      { path: '/result', element: <Result /> },
+    ],
+  },
+])
+
+export default function App() {
+  return <RouterProvider router={router} />
+}
