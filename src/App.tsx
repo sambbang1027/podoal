@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createHashRouter, RouterProvider } from 'react-router-dom'
 import Layout from './components/Layout'
 import Setting from './pages/Setting'
 import Ready from './pages/Ready'
@@ -7,7 +7,7 @@ import Seat from './pages/Seat'
 import Captcha from './pages/Captcha'
 import Result from './pages/Result'
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     element: <Layout />,
     children: [
