@@ -17,7 +17,7 @@ export default function Ready() {
   const navigate = useNavigate()
   const { setReactionTime, setPopupClickTime, setBookingStartTime, concertName, maxQueueSize, difficulty } = useGameStore()
 
-  const [countdownOption, setCountdownOption] = useState<CountdownOption | null>(null)
+  const [_countdownOption, setCountdownOption] = useState<CountdownOption | null>(null)
   const [phase, setPhase] = useState<'select' | 'countdown' | 'active' | 'missed'>('select')
   const [nowMs, setNowMs] = useState(Date.now())
   const [targetMs, setTargetMs] = useState<number | null>(null)
