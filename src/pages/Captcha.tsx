@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useGameStore } from '../store/useGameStore'
 
 const LIMIT_SEC = 5
-const CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ' // 헷갈리는 I, O 제외
+const CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ'
 
 function generateCode(): string {
   return Array.from({ length: 6 }, () =>
@@ -11,13 +11,12 @@ function generateCode(): string {
   ).join('')
 }
 
-// 각 글자에 랜덤 기울기/위치 부여
 function CharDisplay({ ch, idx }: { ch: string; idx: number }) {
   const rotate = (idx % 2 === 0 ? -1 : 1) * (Math.random() * 15 + 5)
   const ty = (Math.random() - 0.5) * 10
   return (
     <span
-      className="inline-block text-3xl font-black text-white select-none"
+      className="inline-block text-3xl font-black text-[#7C3AED] select-none"
       style={{ transform: `rotate(${rotate}deg) translateY(${ty}px)` }}
     >
       {ch}
@@ -37,12 +36,10 @@ export default function Captcha() {
   const startRef = useRef(Date.now())
   const inputRef = useRef<HTMLInputElement>(null)
 
-  // autoFocus
   useEffect(() => {
     inputRef.current?.focus()
   }, [code])
 
-  // 5초 카운트다운
   useEffect(() => {
     const interval = setInterval(() => {
       setTimeLeft((prev) => {
@@ -66,7 +63,6 @@ export default function Captcha() {
     } else {
       setError('보안문자가 일치하지 않습니다.')
       setInput('')
-      // 새 코드 + 타이머 리셋
       const next = generateCode()
       setCode(next)
       setTimeLeft(LIMIT_SEC)
@@ -76,25 +72,25 @@ export default function Captcha() {
   }
 
   const timerRatio = timeLeft / LIMIT_SEC
-  const timerColor = timerRatio > 0.5 ? 'bg-green-500' : timerRatio > 0.25 ? 'bg-yellow-400' : 'bg-red-500'
+  const timerColor = timerRatio > 0.5 ? 'bg-[#7C3AED]' : timerRatio > 0.25 ? 'bg-[#F59E0B]' : 'bg-[#EF4444]'
 
   return (
     <div className="w-full max-w-sm flex flex-col items-center gap-6">
       {/* 헤더 */}
       <div className="text-center">
-        <p className="text-zinc-500 text-xs tracking-widest uppercase mb-1">안심예매 보안문자</p>
-        <p className="text-zinc-400 text-sm">아래 문자를 정확히 입력하세요</p>
+        <p className="text-[#6B7280] text-xs tracking-widest uppercase mb-1">안심예매 보안문자</p>
+        <p className="text-[#6B7280] text-sm tracking-tight">아래 문자를 정확히 입력하세요</p>
       </div>
 
       {/* 타이머 바 */}
       <div className="w-full flex flex-col gap-1">
         <div className="flex justify-between text-xs">
-          <span className="text-zinc-600">인증 시간</span>
-          <span className={`font-bold font-mono ${timeLeft <= 2 ? 'text-red-400 animate-pulse' : 'text-zinc-400'}`}>
+          <span className="text-[#6B7280] tracking-tight">인증 시간</span>
+          <span className={`font-bold font-mono ${timeLeft <= 2 ? 'text-[#EF4444] animate-pulse' : 'text-[#6B7280]'}`}>
             {timeLeft}초
           </span>
         </div>
-        <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
+        <div className="w-full h-2 bg-[#E5E1F8] rounded-full overflow-hidden">
           <div
             className={`h-full rounded-full transition-all duration-1000 ${timerColor}`}
             style={{ width: `${timerRatio * 100}%` }}
@@ -103,7 +99,8 @@ export default function Captcha() {
       </div>
 
       {/* 보안문자 이미지 */}
-      <div className="w-full bg-zinc-800 border border-zinc-600 rounded-lg px-6 py-5 flex items-center justify-center gap-3"
+      <div
+        className="w-full bg-[#F0EEF9] border-2 border-[#C4B8F0] rounded-xl px-6 py-5 flex items-center justify-center gap-3"
         style={{ filter: 'contrast(1.1)' }}
       >
         {code.split('').map((ch, i) => (
@@ -121,10 +118,10 @@ export default function Captcha() {
           onChange={(e) => setInput(e.target.value.toUpperCase())}
           onKeyDown={(e) => { if (e.key === 'Enter') handleSubmit() }}
           placeholder="6자리 입력"
-          className="w-full bg-zinc-900 border border-zinc-700 focus:border-purple-500 rounded px-4 py-3 text-white text-center text-xl font-mono tracking-[0.5em] placeholder-zinc-700 outline-none transition-colors"
+          className="w-full bg-white border-2 border-[#7C3AED] focus:border-[#A855F7] focus:ring-2 focus:ring-[#A855F7]/30 rounded-lg px-4 py-3 text-[#1C1B22] text-center text-xl font-mono tracking-[0.5em] placeholder-[#9CA3AF] outline-none transition-colors"
         />
         {error && (
-          <p className="text-red-400 text-xs text-center">{error}</p>
+          <p className="text-[#EF4444] text-xs text-center tracking-tight">{error}</p>
         )}
       </div>
 
@@ -132,10 +129,10 @@ export default function Captcha() {
       <button
         onClick={handleSubmit}
         disabled={input.length !== 6}
-        className={`w-full py-4 rounded font-bold tracking-widest text-sm transition-all ${
+        className={`w-full py-4 rounded-xl font-bold tracking-widest text-sm transition-all ${
           input.length === 6
-            ? 'bg-purple-600 hover:bg-purple-500 active:scale-95 text-white'
-            : 'bg-zinc-800 text-zinc-600 cursor-not-allowed'
+            ? 'bg-[#7C3AED] hover:bg-[#5B21B6] active:scale-95 text-white'
+            : 'bg-[#F0EEF9] text-[#9CA3AF] cursor-not-allowed'
         }`}
       >
         확인

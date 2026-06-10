@@ -51,27 +51,27 @@ export default function Popup() {
     <div className="w-full max-w-md flex flex-col gap-6">
       {/* 헤더 */}
       <div className="text-center">
-        <p className="text-zinc-500 text-xs tracking-widest uppercase mb-1">날짜 / 회차 선택</p>
-        <p className="text-white font-bold">{concertName || '가상 콘서트'}</p>
+        <p className="text-[#6B7280] text-xs tracking-widest uppercase mb-1">날짜 / 회차 선택</p>
+        <p className="text-[#1C1B22] font-bold tracking-tight">{concertName || '가상 콘서트'}</p>
       </div>
 
       {/* 팝업 모달 */}
-      <div className="bg-zinc-900 border border-zinc-700 rounded-lg overflow-hidden">
+      <div className="bg-white border border-[#E5E1F8] rounded-2xl overflow-hidden shadow-sm">
         {/* 날짜 선택 */}
-        <div className="border-b border-zinc-700 p-4">
-          <p className="text-zinc-500 text-xs tracking-widest mb-3">날짜 선택</p>
+        <div className="border-b border-[#E5E1F8] p-4">
+          <p className="text-[#6B7280] text-xs tracking-widest mb-3">날짜 선택</p>
           <div className="grid grid-cols-4 gap-2">
             {DATES.map((d) => (
               <button
                 key={d.id}
                 disabled={!d.active}
                 onClick={() => handleDateClick(d.id)}
-                className={`py-3 rounded text-sm font-bold transition-all ${
+                className={`py-3 rounded-lg text-sm font-bold transition-all tracking-tight ${
                   !d.active
-                    ? 'bg-zinc-800 text-zinc-600 cursor-not-allowed line-through'
+                    ? 'bg-[#F0EEF9] text-[#9CA3AF] cursor-not-allowed line-through border border-[#E5E1F8]'
                     : selectedDate === d.id
-                    ? 'bg-purple-600 text-white border border-purple-400'
-                    : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700 border border-zinc-600'
+                    ? 'bg-[#7C3AED] text-white border border-[#7C3AED]'
+                    : 'bg-[#F0EEF9] text-[#1C1B22] hover:border-[#7C3AED] hover:text-[#7C3AED] border border-[#E5E1F8]'
                 }`}
               >
                 {d.label}
@@ -81,20 +81,20 @@ export default function Popup() {
         </div>
 
         {/* 회차 선택 */}
-        <div className="border-b border-zinc-700 p-4 min-h-[88px]">
-          <p className="text-zinc-500 text-xs tracking-widest mb-3">회차 선택</p>
+        <div className="border-b border-[#E5E1F8] p-4 min-h-[88px]">
+          <p className="text-[#6B7280] text-xs tracking-widest mb-3">회차 선택</p>
           {sessions.length === 0 ? (
-            <p className="text-zinc-700 text-sm">날짜를 먼저 선택하세요</p>
+            <p className="text-[#9CA3AF] text-sm tracking-tight">날짜를 먼저 선택하세요</p>
           ) : (
             <div className="flex gap-3">
               {sessions.map((s) => (
                 <button
                   key={s.id}
                   onClick={() => handleSessionClick(s.id)}
-                  className={`px-6 py-3 rounded text-sm font-bold transition-all border ${
+                  className={`px-6 py-3 rounded-lg text-sm font-bold transition-all border tracking-tight ${
                     selectedSession === s.id
-                      ? 'bg-purple-600 text-white border-purple-400'
-                      : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700 border-zinc-600'
+                      ? 'bg-[#7C3AED] text-white border-[#7C3AED]'
+                      : 'bg-[#F0EEF9] text-[#1C1B22] hover:border-[#7C3AED] hover:text-[#7C3AED] border-[#E5E1F8]'
                   }`}
                 >
                   {s.label}
@@ -109,10 +109,10 @@ export default function Popup() {
           <button
             onClick={handleNext}
             disabled={!canNext}
-            className={`w-full py-4 rounded font-bold tracking-widest text-sm transition-all ${
+            className={`w-full py-4 rounded-xl font-bold tracking-widest text-sm transition-all ${
               canNext
-                ? 'bg-green-500 hover:bg-green-400 active:scale-95 text-white'
-                : 'bg-zinc-800 text-zinc-600 cursor-not-allowed'
+                ? 'bg-[#7C3AED] hover:bg-[#5B21B6] active:scale-95 text-white'
+                : 'bg-[#F0EEF9] text-[#9CA3AF] cursor-not-allowed'
             }`}
           >
             다음단계 →
@@ -121,12 +121,12 @@ export default function Popup() {
       </div>
 
       {/* 콤보 가이드 */}
-      <div className="flex items-center justify-center gap-3 text-xs text-zinc-600">
-        <span className={selectedDate ? 'text-green-400' : ''}>① 날짜</span>
+      <div className="flex items-center justify-center gap-3 text-xs text-[#9CA3AF] tracking-tight">
+        <span className={selectedDate ? 'text-[#7C3AED] font-bold' : ''}>① 날짜</span>
         <span>→</span>
-        <span className={selectedSession ? 'text-green-400' : ''}>② 회차</span>
+        <span className={selectedSession ? 'text-[#7C3AED] font-bold' : ''}>② 회차</span>
         <span>→</span>
-        <span className={canNext ? 'text-green-400' : ''}>③ 다음단계</span>
+        <span className={canNext ? 'text-[#7C3AED] font-bold' : ''}>③ 다음단계</span>
       </div>
     </div>
   )
