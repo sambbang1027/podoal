@@ -1,18 +1,19 @@
 import { Outlet, useLocation } from 'react-router-dom'
 import F5Overlay from './F5Overlay'
 
-const F5_ACTIVE_PATHS = ['/ready', '/popup', '/queue']
+const F5_ACTIVE_PATHS = ['/ready', '/popup']
 
 const STAGE_LABELS: Record<string, string> = {
   '/': 'SETTING',
   '/ready': 'READY',
   '/queue': 'QUEUE',
   '/captcha': 'CAPTCHA',
+  '/zone': 'ZONE',
   '/seat': 'SEAT',
   '/result': 'RESULT',
 }
 
-const STAGE_ORDER = ['/', '/ready', '/queue', '/captcha', '/seat', '/result']
+const STAGE_ORDER = ['/', '/ready', '/queue', '/captcha', '/zone', '/seat', '/result']
 
 export default function Layout() {
   const { pathname } = useLocation()

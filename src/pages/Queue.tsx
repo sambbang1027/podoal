@@ -4,22 +4,25 @@ import { useGameStore } from '../store/useGameStore'
 
 export default function Queue() {
   const navigate = useNavigate()
-  const { maxQueueSize, reactionTime, popupClickTime, setQueueNumber } = useGameStore()
+  const { maxQueueSize, reactionTime, popupClickTime, setQueueNumber, currentQueue, setCurrentQueue } = useGameStore()
 
+  // 새로고침 복원: currentQueue가 저장돼 있으면 그걸 사용, 없으면 실력 기반 계산
   const reactionRatio = Math.min(reactionTime / 1000, 1)
   const popupRatio = Math.min(popupClickTime / 10000, 1)
   const combined = reactionRatio * 0.3 + popupRatio * 0.7
-  const initialQueue = Math.max(1, Math.floor(maxQueueSize * combined))
+  const calcedQueue = Math.max(1, Math.floor(maxQueueSize * combined))
+  const startQueue = currentQueue > 0 ? currentQueue : calcedQueue
 
-  const [queue, setQueue] = useState(initialQueue)
-  const [penalty, setPenalty] = useState<number | null>(null)
-  const queueRef = useRef(initialQueue)
+  const [queue, setQueue] = useState(startQueue)
+  const queueRef = useRef(startQueue)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
+  // 대기열 감소 로직
   useEffect(() => {
     const tick = () => {
       if (queueRef.current <= 0) {
         if (intervalRef.current) clearInterval(intervalRef.current)
+        setCurrentQueue(0)
         setQueueNumber(0)
         navigate('/captcha')
         return
@@ -29,6 +32,7 @@ export default function Queue() {
       )
       queueRef.current = Math.max(0, queueRef.current - decrease)
       setQueue(queueRef.current)
+      setCurrentQueue(queueRef.current) // sessionStorage에 현재 위치 저장
     }
 
     const scheduleNext = () => {
@@ -44,23 +48,19 @@ export default function Queue() {
     return () => {
       if (intervalRef.current) clearTimeout(intervalRef.current)
     }
-  }, [maxQueueSize, navigate, setQueueNumber])
+  }, [maxQueueSize, navigate, setQueueNumber, setCurrentQueue])
 
+  // 새로고침 감지 → 패널티 저장 후 실제 새로고침 허용
   useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'F5' || (e.ctrlKey && e.key === 'r')) {
-        const penaltyAmount = Math.floor(maxQueueSize * 0.3)
-        queueRef.current += penaltyAmount
-        setQueue(queueRef.current)
-        setPenalty(penaltyAmount)
-        setTimeout(() => setPenalty(null), 2500)
-      }
+    const handleBeforeUnload = () => {
+      const penalty = Math.floor(maxQueueSize * 0.3)
+      setCurrentQueue(Math.min(queueRef.current + penalty, maxQueueSize))
     }
-    window.addEventListener('keydown', handleKey)
-    return () => window.removeEventListener('keydown', handleKey)
-  }, [maxQueueSize])
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+  }, [maxQueueSize, setCurrentQueue])
 
-  const progress = Math.max(0, 1 - queue / initialQueue)
+  const progress = Math.max(0, 1 - queue / startQueue)
   const queueDisplay = queue.toLocaleString()
 
   return (
@@ -94,19 +94,11 @@ export default function Queue() {
         </div>
       </div>
 
-      {/* F5 패널티 알림 */}
-      {penalty !== null && (
-        <div className="w-full bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-center animate-pulse">
-          <p className="text-[#EF4444] font-bold text-sm tracking-tight">
-            ⚠️ 새로고침으로 인해 대기자 {penalty.toLocaleString()}명이 추가되었습니다!
-          </p>
-        </div>
-      )}
-
       {/* 다음 단계 버튼 */}
       <button
         onClick={() => {
           if (intervalRef.current) clearTimeout(intervalRef.current)
+          setCurrentQueue(0)
           setQueueNumber(queue)
           navigate('/captcha')
         }}

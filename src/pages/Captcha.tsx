@@ -59,7 +59,7 @@ export default function Captcha() {
     if (input.toUpperCase() === code) {
       const elapsed = Date.now() - startRef.current
       setCaptchaTime(elapsed)
-      navigate('/seat')
+      navigate('/zone')
     } else {
       setError('보안문자가 일치하지 않습니다.')
       setInput('')
