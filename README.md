@@ -23,7 +23,8 @@
 | ⏱️ **READY** | 밀리초 서버 시계 주시 → 정각에 초록 버튼 클릭. 날짜/회차 선택까지 한 화면에서 처리 |
 | 🎟️ **QUEUE** | 설정 인원 기반 대기 번호 부여 → 실시간 감소하는 대기열 대기. 원하면 바로 입장도 가능 |
 | 🔐 **CAPTCHA** | 안심예매 6자리 대문자 보안문자를 5초 안에 입력 |
-| 🍇 **SEAT** | 20×20 그리드 400석에서 봇들과 경쟁하며 포도알 선점. 이선좌 모달 대응 훈련 |
+| 🗺️ **ZONE** | VIP · 2층 · 3층 구역 선택. 봇이 구역별로 실시간 잔여석을 소진하며, VIP 매진 시 2층에 러시 봇 투입 |
+| 🍇 **SEAT** | 선택한 구역의 좌석 그리드에서 봇들과 경쟁하며 포도알 선점. 이선좌 모달 대응 훈련 |
 | 📊 **RESULT** | 스테이지별 기록 분석 + 피지컬 등급 + 역대 탑 3 + 개인화 피드백 |
 
 ---
@@ -59,8 +60,8 @@
 
 ```bash
 # 저장소 클론
-git clone https://github.com/your-username/podo-r-fighter.git
-cd podo-r-fighter
+git clone https://github.com/sambbang1027/podoal.git
+cd podoal
 
 # 의존성 설치
 npm install
@@ -69,7 +70,7 @@ npm install
 npm run dev
 ```
 
-브라우저에서 `http://localhost:5173` 접속
+브라우저에서 `http://localhost:5173/podoal/` 접속
 
 ```bash
 # 빌드
@@ -86,7 +87,7 @@ npm run preview
 - **빌드**: Vite 5
 - **UI**: React 18 + TypeScript
 - **스타일링**: Tailwind CSS v3
-- **라우팅**: React Router DOM v6 (createBrowserRouter)
+- **라우팅**: React Router DOM v6 (createHashRouter)
 - **상태 관리**: Zustand v5
 - **데이터 저장**: LocalStorage (백엔드 없음)
 
@@ -101,6 +102,7 @@ src/
 │   ├── Ready.tsx       # 정각 타임어택 + 날짜/회차 선택
 │   ├── Queue.tsx       # 가상 대기열
 │   ├── Captcha.tsx     # 보안문자 입력
+│   ├── Zone.tsx        # 구역 선택 (VIP / 2층 / 3층)
 │   ├── Seat.tsx        # 좌석 선택 (포도알 전쟁터)
 │   └── Result.tsx      # 결과 대시보드
 ├── components/
