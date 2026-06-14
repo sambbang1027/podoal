@@ -8,9 +8,9 @@
 
 ### 다음 작업 — E2E 전체 플로우 검증 + 배포
 
-- [ ] 전체 플로우 E2E 재확인 (SETTING → READY → POPUP → QUEUE → CAPTCHA → ZONE → SEAT → RESULT)
-- [ ] 엣지케이스 테스트: 전 구역 매진, 이선좌 연속, F5 패널티
-- [ ] `npm run build && npm run deploy` gh-pages 배포
+- [x] 전체 플로우 E2E 재확인 (SETTING → READY → QUEUE → CAPTCHA → ZONE → SEAT → RESULT)
+- [x] 엣지케이스 테스트: VIP 매진 후 floor2, CAPTCHA 타임아웃, F5 패널티(QUEUE)
+- [x] `npm run build && npm run deploy` gh-pages 배포
 
 ---
 
