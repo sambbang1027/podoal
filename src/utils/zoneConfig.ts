@@ -32,7 +32,7 @@ export const ZONE_CONFIG: Record<ZoneKey, ZoneConfig> = {
     botMinMs: 600,
     botMaxMs: 800,
     takenProb: 0.3,
-    startDelay: 4000,
+    startDelay: 500,
   },
   floor3: {
     label: '3층',
@@ -42,7 +42,7 @@ export const ZONE_CONFIG: Record<ZoneKey, ZoneConfig> = {
     botMinMs: 600,
     botMaxMs: 900,
     takenProb: 0.15,
-    startDelay: 8000,
+    startDelay: 1500,
   },
 }
 

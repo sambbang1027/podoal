@@ -62,12 +62,9 @@ export default function Seat() {
     }
   }, [cfg.botCount, runBot])
 
-  // 매진 → 구역 선택으로 복귀
+  // 매진 → 구역 선택으로 즉시 복귀
   useEffect(() => {
-    if (soldOut) {
-      const t = setTimeout(() => navigate('/zone'), 1800)
-      return () => clearTimeout(t)
-    }
+    if (soldOut) navigate('/zone')
   }, [soldOut, navigate])
 
   const handleSeatClick = (idx: number) => {
@@ -132,18 +129,6 @@ export default function Seat() {
           <span className="w-3 h-3 rounded-sm bg-[#F59E0B] inline-block" /> 선택 중
         </span>
       </div>
-
-      {/* 매진 오버레이 */}
-      {soldOut && (
-        <div className="fixed inset-0 z-40 bg-black/80 flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-[#EF4444] text-3xl font-bold mb-2 tracking-tight">
-              {cfg.label} 매진 😭
-            </p>
-            <p className="text-white/60 text-sm tracking-tight">구역 선택으로 돌아갑니다...</p>
-          </div>
-        </div>
-      )}
 
       {/* 이선좌 모달 */}
       {modal && (

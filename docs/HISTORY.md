@@ -4,6 +4,23 @@
 
 ---
 
+## 2026-06-13 (오늘)
+
+### Zone 봇 타이밍 현실화 + floor2 리셋 버그 수정
+
+- **변경 파일**: `src/utils/zoneConfig.ts`, `src/pages/Zone.tsx`, `src/pages/Seat.tsx`
+- **내용**:
+  - **floor2 startDelay**: 4000ms → 500ms, floor3: 8000ms → 4000ms → floor2 1500ms (VIP와 거의 동시에 소진 시작)
+  - **VIP 매진 시 floor2 러시 봇 투입** (`handleVipSoldOut`) — `startBots('floor2', 6)` 즉시 추가 투입
+  - **Zone.tsx `startBots` 리팩터** — `extraCount`, `onSoldOut` 콜백 파라미터 추가
+  - **allSoldOut을 `displaySeats` 기반으로 수정** — 기존 `seatsRef` 기반은 리렌더 타이밍 이슈 있었음
+  - **floor2 리셋 버그 수정** — 봇 tick마다 `setZoneSeatState` 호출 추가 (Zustand 실시간 동기화)
+  - **첫 tick 딜레이 단축**: 600-800ms → 0-80ms (Zone 진입 즉시 소진 시작, 리마운트 시 stale state 방지)
+  - **Seat 매진 오버레이 제거** — soldOut 시 즉시 `/zone` 복귀 (1.8초 대기 제거)
+- **핵심 버그 원인**: 봇 tick이 Zustand에 상태를 저장하지 않아 유저가 Zone → Seat → Zone 이동 시 floor2가 `[]`(빈 배열)로 복원되어 120으로 리셋되는 현상
+
+---
+
 ## 2026-06-12
 
 ### Zone/Seat 플로우 완성 + 버그 수정 + VIP 난이도 조정

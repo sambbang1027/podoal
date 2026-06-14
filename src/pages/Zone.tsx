@@ -36,9 +36,11 @@ export default function Zone() {
   })
 
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([])
+  const vipRushTriggered = useRef(false)
 
-  const startBots = useCallback((zone: ZoneKey) => {
+  const startBots = useCallback((zone: ZoneKey, extraCount?: number, onSoldOut?: () => void) => {
     const cfg = ZONE_CONFIG[zone]
+    const count = extraCount ?? cfg.botCount
 
     const tick = () => {
       const current = seatsRef.current[zone]
@@ -52,22 +54,33 @@ export default function Zone() {
       seatsRef.current[zone] = current.map((s, i) =>
         i === idx && s === 'available' ? 'taken' : s
       )
+      // displaySeats: 화면 갱신 / setZoneSeatState: 페이지 이동 후 복원을 위한 Zustand 동기화
       setDisplaySeats((prev) => ({ ...prev, [zone]: [...seatsRef.current[zone]] }))
+      setZoneSeatState(zone, [...seatsRef.current[zone]])
 
-      if (seatsRef.current[zone].filter((s) => s === 'available').length === 0) return
+      if (seatsRef.current[zone].filter((s) => s === 'available').length === 0) {
+        onSoldOut?.()
+        return
+      }
 
       const delay = Math.random() * (cfg.botMaxMs - cfg.botMinMs) + cfg.botMinMs
       const t = setTimeout(tick, delay)
       timersRef.current.push(t)
     }
 
-    for (let i = 0; i < cfg.botCount; i++) {
-      const delay = Math.random() * (cfg.botMaxMs - cfg.botMinMs) + cfg.botMinMs
-      const t = setTimeout(tick, delay)
+    for (let i = 0; i < count; i++) {
+      // 첫 tick을 거의 즉시 실행: 유저가 페이지를 빠르게 이탈해도 Zustand에 최신 상태가 남도록
+      // (일반 간격인 300~900ms로 지연하면 첫 tick 전에 이탈 시 빈 배열이 저장될 수 있음)
+      const firstDelay = Math.floor(Math.random() * 80)
+      const t = setTimeout(tick, firstDelay)
       timersRef.current.push(t)
     }
-  }, [])
+  }, [setZoneSeatState])
 
+  // deps를 []로 고정한 이유:
+  // - Zustand 액션(setZoneSeatState 등)은 항상 동일한 참조 → 변경되지 않음
+  // - startBots는 useCallback([setZoneSeatState])로 안정화됨
+  // - zoneEntryTime은 최초 진입 시 1회만 읽으면 되므로 재실행 불필요
   useEffect(() => {
     const now = Date.now()
     let entryTime = zoneEntryTime
@@ -75,23 +88,35 @@ export default function Zone() {
       setZoneEntryTime(now)
       entryTime = now
     }
+    // elapsed: Zone에 처음 들어온 후 경과 시간 (재진입 시 이어서 계산)
     const elapsed = now - entryTime
+
+    // VIP 매진 시 floor2에 추가 봇을 투입하는 콜백
+    // vipRushTriggered ref로 중복 실행 방지 (VIP 봇 여러 개가 동시에 매진 감지할 수 있음)
+    const handleVipSoldOut = () => {
+      if (vipRushTriggered.current) return
+      vipRushTriggered.current = true
+      setOpenedZones((prev) => ({ ...prev, floor2: true }))
+      startBots('floor2', 6)
+    }
 
     ZONE_KEYS.forEach((zone) => {
       const remaining = ZONE_CONFIG[zone].startDelay - elapsed
       if (remaining <= 0) {
-        startBots(zone)
+        // 재진입이거나 이미 startDelay를 지난 구역 → 즉시 시작
+        startBots(zone, undefined, zone === 'vip' ? handleVipSoldOut : undefined)
       } else {
+        // 아직 startDelay 남은 구역 → 남은 시간만큼 기다렸다가 시작
         const t = setTimeout(() => {
           setOpenedZones((prev) => ({ ...prev, [zone]: true }))
-          startBots(zone)
+          startBots(zone, undefined, zone === 'vip' ? handleVipSoldOut : undefined)
         }, remaining)
         timersRef.current.push(t)
       }
     })
 
     return () => {
-      // 언마운트 시 현재 좌석 상태 스토어에 저장
+      // 언마운트 시 최신 좌석 상태를 Zustand에 최종 저장 후 타이머 정리
       ZONE_KEYS.forEach((zone) => {
         setZoneSeatState(zone, [...seatsRef.current[zone]])
       })
@@ -104,16 +129,12 @@ export default function Zone() {
     const available = seatsRef.current[zone].filter((s) => s === 'available').length
     if (available === 0) return
 
-    ZONE_KEYS.forEach((z) => {
-      setZoneSeatState(z, [...seatsRef.current[z]])
-    })
-
     setSelectedZone(zone)
     navigate('/seat')
   }
 
   const allSoldOut = ZONE_KEYS.every(
-    (z) => seatsRef.current[z].filter((s) => s === 'available').length === 0
+    (z) => displaySeats[z].filter((s) => s === 'available').length === 0
   )
 
   return (
